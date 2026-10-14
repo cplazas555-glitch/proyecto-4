@@ -1,0 +1,161 @@
+/* variables */
+:root {
+  --bg: #eef1f6;
+  --surface: #ffffff;
+  --ink: #14213d;
+  --ink-soft: #55607a;
+  --line: #c9d1e0;
+  --accent: #3b4cca;
+
+  --new: #0b7a75;      --new-bg: #dcf3f1;
+  --improved: #3b4cca; --improved-bg: #e3e6fb;
+  --fixed: #9a5b00;    --fixed-bg: #fbecd0;
+
+  --meta-col: 9rem;
+  --rail-col: 2rem;
+  --gap: clamp(1rem, 3vw, 2rem);
+}
+
+/* reset */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Figtree", system-ui, sans-serif;
+  line-height: 1.55;
+}
+
+/* contenedor centrado */
+.changelog {
+  width: min(100% - 2rem, 60rem);
+  margin-inline: auto;
+  padding-block: clamp(2rem, 6vw, 5rem);
+}
+
+.changelog__header { margin-bottom: clamp(2rem, 5vw, 4rem); }
+.changelog__title {
+  margin: 0 0 .5rem;
+  font-size: clamp(2rem, 5vw + 1rem, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -.02em;
+}
+.changelog__intro { margin: 0; max-width: 40ch; color: var(--ink-soft); }
+
+/* cada entrada es un grid de 3 columnas: fecha | línea | contenido */
+.timeline { list-style: none; margin: 0; padding: 0; }
+
+.entry {
+  display: grid;
+  grid-template-columns: var(--meta-col) var(--rail-col) minmax(0, 1fr);
+  column-gap: var(--gap);
+  padding-bottom: 2.5rem;   /* padding y no margin para que la línea no se corte */
+}
+
+/* columna 1: versión y fecha */
+.entry__meta {
+  text-align: right;
+  position: sticky;
+  top: 1.5rem;
+  align-self: start;        /* sin esto el sticky no funciona */
+}
+.entry__version {
+  display: inline-block;
+  margin: 0;
+  padding: .15rem .7rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.entry__date {
+  display: block;
+  margin-top: .4rem;
+  color: var(--ink-soft);
+  font-size: .9rem;
+}
+
+/* columna 2: línea y punto */
+.entry__rail { position: relative; }
+
+.entry__rail::before {      /* línea */
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: var(--line);
+}
+.entry__rail::after {       /* punto */
+  content: "";
+  position: absolute;
+  top: .35rem;
+  left: 50%;
+  width: 1rem; height: 1rem;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: var(--bg);
+  border: 3px solid var(--accent);
+}
+/* la última no lleva línea hacia abajo */
+.entry:last-child .entry__rail::before { bottom: auto; height: .6rem; }
+/* la más reciente lleva el punto relleno */
+.entry--latest .entry__rail::after { background: var(--accent); }
+
+/* columna 3: tarjeta */
+.entry__body {
+  background: var(--surface);
+  padding: clamp(1.1rem, 3vw, 1.75rem);
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  min-width: 0;
+}
+.entry__title { margin: 0 0 .4rem; font-size: 1.3rem; line-height: 1.25; }
+.entry__summary { margin: 0 0 1.25rem; color: var(--ink-soft); max-width: 60ch; }
+
+/* lista de cambios: flex con wrap para que baje el texto en pantallas chicas */
+.changes { list-style: none; margin: 0; padding: 0; display: grid; gap: .75rem; }
+.change {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .35rem .75rem;
+}
+.change__text { flex: 1 1 14rem; margin: 0; }
+
+.tag {
+  flex: none;
+  min-width: 6.5rem;
+  padding: .1rem .6rem;
+  border-radius: .4rem;
+  font-size: .8rem;
+  font-weight: 700;
+  text-align: center;
+}
+.tag--new      { color: var(--new);      background: var(--new-bg); }
+.tag--improved { color: var(--improved); background: var(--improved-bg); }
+.tag--fixed    { color: var(--fixed);    background: var(--fixed-bg); }
+
+/* móvil: 2 columnas, la línea a la izquierda */
+@media (max-width: 720px) {
+  .entry {
+    grid-template-columns: var(--rail-col) minmax(0, 1fr);
+    column-gap: .5rem;
+  }
+  .entry__rail { grid-column: 1; grid-row: 1 / span 2; }
+  .entry__meta {
+    grid-column: 2; grid-row: 1;
+    position: static;
+    text-align: left;
+    display: flex; align-items: center; gap: .75rem;
+    margin-bottom: .75rem;
+  }
+  .entry__date { margin-top: 0; }
+  .entry__body { grid-column: 2; grid-row: 2; }
+}
+
+@media (max-width: 400px) {
+  .tag { min-width: 0; }
+}
